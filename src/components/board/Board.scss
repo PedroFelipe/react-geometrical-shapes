@@ -1,0 +1,15 @@
+@import '../../css/colors.scss';
+
+.board {
+  &-area {
+    height: calc(100vh - 6.875rem);
+    background-color: $white;
+    border-radius: .5rem;
+    box-shadow: -0.3125rem 0.3125rem rgba($black, .1);
+    overflow: hidden;
+  }
+
+  &-button {
+    margin-top: 1.875rem;
+  }
+}
