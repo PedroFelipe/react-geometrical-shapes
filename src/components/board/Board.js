@@ -4,6 +4,10 @@ import { Button } from 'react-bootstrap'
 
 import './Board.css'
 
+const RED = '#E75058'
+const BLUE = '#233D7F'
+const YELLOW = '#FBD855'
+
 class Board extends Component {
   constructor(props) {
     super(props)
@@ -40,30 +44,33 @@ class Board extends Component {
     }
   }
 
+  reset() {
+    this.setState({ points: [] })
+  }
+
   render() {
     const { points, config } = this.state
 
     return (
       <div className="board">
-        <div className="board-area" onClick={(e) => this.handlePoint(e)}>
-          <svg width={config.width} height={config.height} viewBox={`0 0 ${config.width} ${config.height}`}>
+        <div className="board-area">
+          <svg viewBox={`0 0 ${config.width} ${config.height - 55}`} onClick={(e) => this.handlePoint(e)}>
             {
               points.map((point, key) => (
                 <circle
                   key={key}
                   cx={point.x}
                   cy={point.y}
-                  r="3"
-                  stroke="black"
-                  fill="red"
+                  r="11"
+                  stroke="transparent"
+                  fill={RED}
                 />
               ))
             }
           </svg>
-        </div>
 
-        <Button className="board-button" bsStyle="primary" bsSize="small">About</Button>
-        <Button className="board-button pull-right" bsSize="small">Reset</Button>
+          <Button bsStyle="custom" bsSize="small" onClick={() => this.reset()}>Reset</Button>
+        </div>
       </div>
     )
   }
