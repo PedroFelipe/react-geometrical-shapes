@@ -26,18 +26,26 @@ class Board extends Component {
       config: {
         width: boardConfiguration.width,
         height: boardConfiguration.height,
-        top: boardConfiguration.top,
-        left: boardConfiguration.left,
+        top: boardConfiguration.top + 95,
+        left: boardConfiguration.left + 47,
       }
     })
+  }
+
+  checkPosition(points, x, y) {
+    return points.every((o) => (o.x !== x) && (o.y !== y))
   }
 
   handlePoint(e) {
     const { points, config } = this.state
     let newPoints = points.slice()
 
-    if (points.length <= 2) {
-      newPoints.push({ x: e.screenX - config.left, y: e.screenY - config.top })
+    const x = e.screenX - config.left
+    const y = e.screenY - config.top
+
+    if (points.length <= 2 && this.checkPosition(points, x, y)) {
+      newPoints.push({ x: x, y: y})
+
       this.setState({
         points: newPoints,
       })
@@ -54,7 +62,7 @@ class Board extends Component {
     return (
       <div className="board">
         <div className="board-area">
-          <svg viewBox={`0 0 ${config.width} ${config.height - 55}`} onClick={(e) => this.handlePoint(e)}>
+          <svg viewBox={`0 0 ${config.width} ${config.height}`} onClick={(e) => this.handlePoint(e)}>
             {
               points.map((point, key) => (
                 <circle
