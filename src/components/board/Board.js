@@ -28,8 +28,8 @@ class Board extends Component {
       config: {
         width: boardConfiguration.width,
         height: boardConfiguration.height,
-        top: boardConfiguration.top + 95,
-        left: boardConfiguration.left + 47,
+        top: boardConfiguration.top,
+        left: boardConfiguration.left,
       }
     })
   }
@@ -130,7 +130,7 @@ class Board extends Component {
   }
 
   reset() {
-    this.setState({ points: [] })
+    this.setState({ points: [], center: {} })
   }
 
   render() {
@@ -145,13 +145,14 @@ class Board extends Component {
 
               { this.drawCircles() }
 
-              <circle
-                cx={center.x}
-                cy={center.y}
-                r="11"
-                stroke="transparent"
-                fill={RED}
-              />
+              { center && !isEmpty(center) &&
+                <circle
+                  cx={center.x}
+                  cy={center.y}
+                  r="11"
+                  stroke="transparent"
+                  fill={RED} />
+              }
             </g>
           </svg>
 
