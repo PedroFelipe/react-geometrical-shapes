@@ -52,6 +52,29 @@ class Board extends Component {
     }
   }
 
+  drawLines() {
+    const { points } = this.state
+
+    if (points.length === 2) {
+      const startPoint = points[0]
+      const finalPoint = points[1]
+
+      return (
+        <line x1={startPoint.x} y1={startPoint.y} x2={finalPoint.x} y2={finalPoint.y} stroke={BLUE} />
+      )
+    }
+
+    if (points.length === 3) {
+      return (
+        <g>
+          <line x1={points[0].x} y1={points[0].y} x2={points[1].x} y2={points[1].y} stroke={BLUE} />
+          <line x1={points[1].x} y1={points[1].y} x2={points[2].x} y2={points[2].y} stroke={BLUE} />
+          <line x1={points[2].x} y1={points[2].y} x2={points[0].x} y2={points[0].y} stroke={BLUE} />
+        </g>
+      )
+    }
+  }
+
   reset() {
     this.setState({ points: [] })
   }
@@ -63,18 +86,22 @@ class Board extends Component {
       <div className="board">
         <div className="board-area">
           <svg viewBox={`0 0 ${config.width} ${config.height}`} onClick={(e) => this.handlePoint(e)}>
-            {
-              points.map((point, key) => (
-                <circle
-                  key={key}
-                  cx={point.x}
-                  cy={point.y}
-                  r="11"
-                  stroke="transparent"
-                  fill={RED}
-                />
-              ))
-            }
+            <g>
+              {
+                points.map((point, key) => (
+                  <circle
+                    key={key}
+                    cx={point.x}
+                    cy={point.y}
+                    r="11"
+                    stroke="transparent"
+                    fill={RED}
+                  />
+                ))
+              }
+
+              { this.drawLines() }
+            </g>
           </svg>
 
           <Button bsStyle="custom" bsSize="small" onClick={() => this.reset()}>Reset</Button>
