@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
 import { Button } from 'react-bootstrap'
+import { isEmpty, difference } from 'ramda'
 
 import './Board.css'
 
@@ -14,6 +15,7 @@ class Board extends Component {
 
     this.state = {
       points: [],
+      center: {},
       config: {},
     }
   }
@@ -30,6 +32,14 @@ class Board extends Component {
         left: boardConfiguration.left + 47,
       }
     })
+  }
+
+  componentDidUpdate() {
+    const { points, center } = this.state
+
+    if (points.length === 3 && isEmpty(center)) {
+      this.calculateCenter()
+    }
   }
 
   checkPosition(points, x, y) {
@@ -50,6 +60,50 @@ class Board extends Component {
         points: newPoints,
       })
     }
+  }
+
+  calculateCenter() {
+    const { points } = this.state
+
+    let farest = points[0]
+    let nearest = points[0]
+
+    points.forEach(point => {
+      if(point.x >= farest.x) {
+        farest = point
+      }
+    })
+
+    points.forEach(point => {
+      if(point.x <= nearest.x) {
+        nearest = point
+      }
+    })
+
+    const middlePoint = difference(points, [farest, nearest])[0]
+
+    const centerX = (nearest.x + farest.x) / 2
+    const centerY = (nearest.y + farest.y) / 2
+    const center = { x: centerX, y: centerY }
+
+    this.setState({ center })
+  }
+
+  drawCircles() {
+    const { points } = this.state
+
+    return (
+      points.map((point, key) => (
+        <circle
+          key={key}
+          cx={point.x}
+          cy={point.y}
+          r="11"
+          stroke="transparent"
+          fill={RED}
+        />
+      ))
+    )
   }
 
   drawLines() {
@@ -80,27 +134,24 @@ class Board extends Component {
   }
 
   render() {
-    const { points, config } = this.state
+    const { points, center, config } = this.state
 
     return (
       <div className="board">
         <div className="board-area">
           <svg viewBox={`0 0 ${config.width} ${config.height}`} onClick={(e) => this.handlePoint(e)}>
             <g>
-              {
-                points.map((point, key) => (
-                  <circle
-                    key={key}
-                    cx={point.x}
-                    cy={point.y}
-                    r="11"
-                    stroke="transparent"
-                    fill={RED}
-                  />
-                ))
-              }
-
               { this.drawLines() }
+
+              { this.drawCircles() }
+
+              <circle
+                cx={center.x}
+                cy={center.y}
+                r="11"
+                stroke="transparent"
+                fill={RED}
+              />
             </g>
           </svg>
 
