@@ -3,6 +3,8 @@ import React, { Component } from 'react'
 import { Button } from 'react-bootstrap'
 import { isEmpty, difference } from 'ramda'
 
+import Calculate from '../../presenters/Calculate'
+
 import './Board.css'
 
 const RED = '#E75058'
@@ -16,6 +18,8 @@ class Board extends Component {
     this.state = {
       points: [],
       center: {},
+      edges: {},
+      radius: 0,
       config: {},
     }
   }
@@ -35,10 +39,16 @@ class Board extends Component {
   }
 
   componentDidUpdate() {
-    const { points, center } = this.state
+    const { points, center, edges } = this.state
 
     if (points.length === 3 && isEmpty(center)) {
-      this.calculateCenter()
+      const edges = Calculate.edges(points)
+      const center = Calculate.center(edges)
+      const fourthPoint = Calculate.fourthPoint(points, center, edges.middle)
+      const area = Calculate.area(edges)
+      const radius = Calculate.radius(area)
+
+      this.setState({ points: fourthPoint, center, edges, radius })
     }
   }
 
@@ -62,31 +72,8 @@ class Board extends Component {
     }
   }
 
-  calculateCenter() {
-    const { points } = this.state
-
-    let farest = points[0]
-    let nearest = points[0]
-
-    points.forEach(point => {
-      if(point.x >= farest.x) {
-        farest = point
-      }
-    })
-
-    points.forEach(point => {
-      if(point.x <= nearest.x) {
-        nearest = point
-      }
-    })
-
-    const middlePoint = difference(points, [farest, nearest])[0]
-
-    const centerX = (nearest.x + farest.x) / 2
-    const centerY = (nearest.y + farest.y) / 2
-    const center = { x: centerX, y: centerY }
-
-    this.setState({ center })
+  reset() {
+    this.setState({ points: [], center: {}, edges: {} })
   }
 
   drawCircles() {
@@ -107,34 +94,41 @@ class Board extends Component {
   }
 
   drawLines() {
-    const { points } = this.state
+    const { points, edges } = this.state
 
-    if (points.length === 2) {
-      const startPoint = points[0]
-      const finalPoint = points[1]
-
-      return (
-        <line x1={startPoint.x} y1={startPoint.y} x2={finalPoint.x} y2={finalPoint.y} stroke={BLUE} />
-      )
-    }
-
-    if (points.length === 3) {
+    if (points.length >= 3 && !isEmpty(edges)) {
       return (
         <g>
-          <line x1={points[0].x} y1={points[0].y} x2={points[1].x} y2={points[1].y} stroke={BLUE} />
-          <line x1={points[1].x} y1={points[1].y} x2={points[2].x} y2={points[2].y} stroke={BLUE} />
-          <line x1={points[2].x} y1={points[2].y} x2={points[0].x} y2={points[0].y} stroke={BLUE} />
+          <line x1={edges.nearest.x} y1={edges.nearest.y} x2={edges.middle.x} y2={edges.middle.y} stroke={BLUE} strokeWidth="2" />
+          <line x1={edges.middle.x} y1={edges.middle.y} x2={edges.farest.x} y2={edges.farest.y} stroke={BLUE} strokeWidth="2" />
+          <line x1={edges.farest.x} y1={edges.farest.y} x2={points[3].x} y2={points[3].y} stroke={BLUE} strokeWidth="2" />
+          <line x1={points[3].x} y1={points[3].y} x2={edges.nearest.x} y2={edges.nearest.y} stroke={BLUE} strokeWidth="2" />
         </g>
       )
     }
   }
 
-  reset() {
-    this.setState({ points: [], center: {} })
+  drawBigCircle() {
+    const { center, radius } = this.state
+
+    console.log(radius)
+
+    if (radius > 0) {
+      return (
+        <circle
+          cx={center.x}
+          cy={center.y}
+          r={radius}
+          stroke={YELLOW}
+          strokeWidth="2"
+          fill="transparent"
+        />
+      )
+    }
   }
 
   render() {
-    const { points, center, config } = this.state
+    const { config } = this.state
 
     return (
       <div className="board">
@@ -145,14 +139,7 @@ class Board extends Component {
 
               { this.drawCircles() }
 
-              { center && !isEmpty(center) &&
-                <circle
-                  cx={center.x}
-                  cy={center.y}
-                  r="11"
-                  stroke="transparent"
-                  fill={RED} />
-              }
+              { this.drawBigCircle() }
             </g>
           </svg>
 
