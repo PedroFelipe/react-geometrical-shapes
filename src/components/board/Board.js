@@ -45,7 +45,7 @@ class Board extends Component {
       const edges = Calculate.edges(points)
       const center = Calculate.center(edges)
       const fourthPoint = Calculate.fourthPoint(points, center, edges.middle)
-      const area = Calculate.area(edges)
+      const area = Calculate.area(edges, center)
       const radius = Calculate.radius(area)
 
       this.setState({ points: fourthPoint, center, edges, radius })
@@ -60,8 +60,8 @@ class Board extends Component {
     const { points, config } = this.state
     let newPoints = points.slice()
 
-    const x = e.screenX - config.left
-    const y = e.screenY - config.top
+    const x = e.clientX - config.left
+    const y = e.clientY - config.top
 
     if (points.length <= 2 && this.checkPosition(points, x, y)) {
       newPoints.push({ x: x, y: y})
@@ -73,7 +73,7 @@ class Board extends Component {
   }
 
   reset() {
-    this.setState({ points: [], center: {}, edges: {} })
+    this.setState({ points: [], center: {}, edges: {}, radius: 0 })
   }
 
   drawCircles() {
@@ -110,8 +110,6 @@ class Board extends Component {
 
   drawBigCircle() {
     const { center, radius } = this.state
-
-    console.log(radius)
 
     if (radius > 0) {
       return (

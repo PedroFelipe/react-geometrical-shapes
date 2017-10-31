@@ -35,26 +35,34 @@ const fourthPoint = (points, center, middle) => {
   return [...points.slice(), { x, y }]
 }
 
-const area = (edges) => {
+const area = (edges, center) => {
   const { nearest, farest, middle } = edges
 
-  return (
-    Math.sqrt(
-      Math.pow(nearest.x - middle.x, 2) +  Math.pow(nearest.y - middle.y, 2)
-    )
-    *
-    Math.sqrt(
-      Math.pow(middle.x - farest.x, 2) +  Math.pow(middle.y - farest.y, 2)
-    )
-  )
+  const baseA = distance(nearest, middle)
+  const heightA = distance(findCenter(nearest, middle), center)
+  const areaA = baseA * heightA
+
+  const baseB = distance(middle, farest)
+  const heightB = distance(findCenter(middle, farest), center)
+  const areaB = baseB * heightB
+
+  return areaA + areaB
 }
 
 const radius = (area) => {
-  return (
-    Math.sqrt(area / Math.PI)
-  )
+  return Math.sqrt(area / Math.PI)
 }
 
+const distance = (start, end) => {
+  return Math.sqrt(Math.pow(start.x - end.x, 2) +  Math.pow(start.y - end.y, 2))
+}
+
+const findCenter = (start, end) => {
+  const x = (start.x + end.x) / 2
+  const y = (start.y + end.y) / 2
+
+  return { x, y }
+}
 export default {
   edges,
   center,
