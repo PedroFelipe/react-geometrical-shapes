@@ -172,7 +172,7 @@ class Board extends Component {
           circle.area && circle.radius &&
           <div className="board-stats-column">
             <p className="board-stats-line">area: {circle.area.toFixed(2)} px²</p>
-            <p className="board-stats-line">circle radius: {circle.radius.toFixed(2)}</p>
+            <p className="board-stats-line">circle radius: {circle.radius.toFixed(2)} px</p>
           </div>
         }
       </div>
