@@ -1,4 +1,4 @@
-# React Parallelogram Autocomplete
+# React Parallelogram Autocomplete [![Build Status](https://travis-ci.org/PedroFelipe/react-parallelogram-autocomplete.svg?branch=master)](https://travis-ci.org/PedroFelipe/react-parallelogram-autocomplete)
 
 ![React Parallelogram Autocomplete](screenshot.png)
 
