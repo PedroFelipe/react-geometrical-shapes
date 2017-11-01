@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import { Button } from 'react-bootstrap'
-import { isEmpty, difference } from 'ramda'
+import { isEmpty } from 'ramda'
 
 import Calculate from '../../presenters/Calculate'
 
@@ -34,7 +34,7 @@ class Board extends Component {
   }
 
   componentDidUpdate() {
-    const { points, center, edges } = this.state
+    const { points, center } = this.state
 
     if (points.length === 3 && isEmpty(center)) {
       const edges = Calculate.edges(points)
