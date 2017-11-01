@@ -28,7 +28,6 @@
 
   &-content,
   &-blockquote {
-    margin-bottom: 0.9375rem;
     font-size: 0.875rem;
     line-height: 1.5;
     color: $brown;
@@ -36,6 +35,11 @@
 
   &-blockquote {
     padding: 0.625rem 0 0.625rem 0.9375rem;
+    margin-bottom: 0.9375rem;
     font-size: 0.875rem;
+  }
+
+  &-content + &-content {
+    margin: 0.9375rem 0 0;
   }
 }

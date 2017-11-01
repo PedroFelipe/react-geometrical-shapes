@@ -20,13 +20,41 @@
   &-draggable {
     cursor: move;
   }
+
+  &-number {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 10px;
+    font-weight: light;
+  }
+
+  &-stats {
+    left: 0.9375rem;
+    font-size: 0.6875rem;
+    color: rgba($brown, .65);
+
+    &-column {
+      display: inline-block;
+      margin-right: 10px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    &-line {
+      margin: 0;
+    }
+  }
 }
 
+.board-stats,
 .btn.btn-custom {
   position: absolute;
   bottom: 0.9375rem;
+}
+
+.btn.btn-custom {
   right: 0.9375rem;
-  float: right;
   padding: 0.5rem 0.75rem;
   font-weight: 600;
   color: $brown;

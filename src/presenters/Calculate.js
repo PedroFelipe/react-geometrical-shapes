@@ -63,6 +63,7 @@ const findCenter = (start, end) => {
 
   return { x, y }
 }
+
 export default {
   edges,
   center,

@@ -10,6 +10,7 @@ import './Board.css'
 const RED = '#FF3735'
 const BLUE = '#0446EA'
 const YELLOW = '#FBD855'
+const WHITE = '#FFFFFF'
 
 class Board extends Component {
   constructor(props) {
@@ -19,7 +20,7 @@ class Board extends Component {
       points: [],
       center: {},
       edges: {},
-      radius: 0,
+      circle: {},
       config: {},
     }
   }
@@ -42,7 +43,9 @@ class Board extends Component {
       const area = Calculate.area(edges, center)
       const radius = Calculate.radius(area)
 
-      this.setState({ points: fourthPoint, center, edges, radius })
+      const circle = { area: area, radius: radius }
+
+      this.setState({ points: fourthPoint, center, edges, circle })
     }
   }
 
@@ -81,7 +84,7 @@ class Board extends Component {
   }
 
   reset() {
-    this.setState({ points: [], center: {}, edges: {}, radius: 0 })
+    this.setState({ points: [], center: {}, edges: {}, circle: {} })
   }
 
   drawCircles() {
@@ -89,14 +92,27 @@ class Board extends Component {
 
     return (
       points.map((point, key) => (
-        <circle
-          key={key}
-          cx={point.x}
-          cy={point.y}
-          r="11"
-          stroke="transparent"
-          fill={RED}
-        />
+        <g key={key}>
+          <circle
+            cx={point.x}
+            cy={point.y}
+            r="11"
+            stroke="transparent"
+            fill={RED}
+          />
+
+          <text
+            x={point.x}
+            y={point.y}
+            text-anchor="middle"
+            stroke={WHITE}
+            stroke-width="1px"
+            dy=".3em"
+            className="board-number"
+          >
+            {key}
+          </text>
+        </g>
       ))
     )
   }
@@ -117,20 +133,44 @@ class Board extends Component {
   }
 
   drawBigCircle() {
-    const { center, radius } = this.state
+    const { center, circle } = this.state
 
-    if (radius > 0) {
+    if (circle.radius > 0) {
       return (
         <circle
           cx={center.x}
           cy={center.y}
-          r={radius}
+          r={circle.radius}
           stroke={YELLOW}
           strokeWidth="2"
           fill="transparent"
         />
       )
     }
+  }
+
+  renderStats() {
+    const { points, circle } = this.state
+
+    return (
+      <div className="board-stats">
+        <div className="board-stats-column">
+          {
+            points.map((point, key) => (
+              <p className="board-stats-line">{key}: [x: {point.x}, y: {point.y}]</p>
+            ))
+          }
+        </div>
+
+        {
+          circle.area && circle.radius &&
+          <div className="board-stats-column">
+            <p className="board-stats-line">circle area: {circle.area.toFixed(2)}</p>
+            <p className="board-stats-line">circle radius: {circle.radius.toFixed(2)}</p>
+          </div>
+        }
+      </div>
+    )
   }
 
   render() {
@@ -143,11 +183,13 @@ class Board extends Component {
             <g>
               { this.drawLines() }
 
-              { this.drawCircles() }
-
               { this.drawBigCircle() }
+
+              { this.drawCircles() }
             </g>
           </svg>
+
+          { this.renderStats() }
 
           <Button bsStyle="custom" bsSize="small" onClick={() => this.reset()}>Reset</Button>
         </div>
