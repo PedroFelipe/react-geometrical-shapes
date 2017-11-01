@@ -44,7 +44,7 @@ class App extends Component {
               <Board />
             </Col>
 
-            <Col xs={12} mdHidden className="app-column">
+            <Col xs={12} mdHidden lgHidden className="app-column">
               { this.renderAbout() }
             </Col>
           </Row>

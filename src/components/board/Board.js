@@ -24,15 +24,18 @@ class Board extends Component {
       edges: {},
       circle: {},
       config: {},
+      hide: null
     }
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.getDimensions())
+    window.addEventListener('resize', this.getDimensions.bind(this))
+
+    this.getDimensions()
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.getDimensions())
+    window.removeEventListener('resize', this.getDimensions.bind(this))
   }
 
   componentDidUpdate() {
@@ -80,7 +83,11 @@ class Board extends Component {
     return vertices[i]
   }
 
-  dragCircle(e, key) {
+  hideCircle(key) {
+    this.setState({ hide: key })
+  }
+
+  moveCircle(e, key) {
     const { points, config } = this.state
     let newPoints = points.slice()
 
@@ -88,7 +95,7 @@ class Board extends Component {
     newPoints[key].y = e.clientY - config.top
     newPoints.pop()
 
-    this.setState({ points: newPoints })
+    this.setState({ points: newPoints, hide: null })
 
     this.reset()
     this.calculate()
@@ -116,6 +123,13 @@ class Board extends Component {
     this.setState({ points: [], center: {}, edges: {}, circle: {} })
   }
 
+
+  shouldCircleHide(key) {
+    const { hide } = this.state
+
+    return hide === key ? 'board-hide' : ''
+  }
+
   drawCircles() {
     const { points } = this.state
 
@@ -123,7 +137,8 @@ class Board extends Component {
       points.map((point, key) => (
         <DraggableSVG.g
           key={key}
-          onDragEnd={(e) => key <= 2 && this.dragCircle(e, key)}
+          onDragStart={() => key <= 2 && this.hideCircle(key)}
+          onDragEnd={(e) => key <= 2 && this.moveCircle(e, key)}
         >
           <circle
             cx={point.x}
@@ -131,7 +146,7 @@ class Board extends Component {
             r="11"
             stroke="transparent"
             fill={RED}
-            className="board-draggable"
+            className={`board-draggable ${this.shouldCircleHide(key)}`}
           />
 
           <text
@@ -141,7 +156,7 @@ class Board extends Component {
             stroke={WHITE}
             strokeWidth="1px"
             dy=".3em"
-            className="board-draggable board-number"
+            className={`board-draggable board-number ${this.shouldCircleHide(key)}`}
           >
             {this.getVerticeName(key)}
           </text>

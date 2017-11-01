@@ -17,6 +17,11 @@
     overflow: hidden;
   }
 
+  &-hide,
+  &-hide > &-number {
+    opacity: 0;
+  }
+
   &-draggable {
     cursor: move;
   }
@@ -68,7 +73,7 @@
 
 div[draggable="true"] {
   cursor: move;
-  
+
   & > div {
     width: 11px;
     height: 11px;
