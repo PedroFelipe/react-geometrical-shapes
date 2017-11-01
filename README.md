@@ -27,7 +27,6 @@ npm build
 ## Tests
 
 ```bash
-# Run React UI tests
 npm test
 ```
 
