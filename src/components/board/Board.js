@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 
 import { Button } from 'react-bootstrap'
 import { isEmpty } from 'ramda'
+import { throttle } from 'lodash'
+import DraggableSVG from 'react-draggable-svg'
 
 import Calculate from '../../presenters/Calculate'
 
@@ -73,6 +75,21 @@ class Board extends Component {
     return vertices[i]
   }
 
+  dragCircle(e, key) {
+    const { points, config } = this.state
+    let newPoints = points.slice()
+
+    newPoints[key].x = e.clientX - config.left
+    newPoints[key].y = e.clientY - config.top
+
+    throttle(() => (
+      this.setState({ points: newPoints })
+    ), 10)
+
+    this.reset()
+    this.forceUpdate()
+  }
+
   handlePoint(e) {
     const { points, config } = this.state
     let newPoints = points.slice()
@@ -83,13 +100,15 @@ class Board extends Component {
     if (points.length <= 2 && this.checkPosition(points, x, y)) {
       newPoints.push({ x: x, y: y})
 
-      this.setState({
-        points: newPoints,
-      })
+      this.setState({ points: newPoints })
     }
   }
 
   reset() {
+    this.setState({ center: {}, edges: {}, circle: {} })
+  }
+
+  resetAll() {
     this.setState({ points: [], center: {}, edges: {}, circle: {} })
   }
 
@@ -98,27 +117,34 @@ class Board extends Component {
 
     return (
       points.map((point, key) => (
-        <g key={key}>
+        <DraggableSVG.g
+          key={key}
+          onDrag={(e) => key <= 2 && this.dragCircle(e, key)}
+          onDragEnter={(e) => key <= 2 && this.dragCircle(e, key)}
+          onDragEnd={(e) => key <= 2 && this.dragCircle(e, key)}
+          onDragExit={(e) => key <= 2 && this.dragCircle(e, key)}
+        >
           <circle
             cx={point.x}
             cy={point.y}
             r="11"
             stroke="transparent"
             fill={RED}
+            className="board-draggable"
           />
 
           <text
             x={point.x}
             y={point.y}
-            text-anchor="middle"
+            textAnchor="middle"
             stroke={WHITE}
-            stroke-width="1px"
+            strokeWidth="1px"
             dy=".3em"
-            className="board-number"
+            className="board-draggable board-number"
           >
             {this.getVerticeName(key)}
           </text>
-        </g>
+        </DraggableSVG.g>
       ))
     )
   }
@@ -197,7 +223,7 @@ class Board extends Component {
 
           { this.renderStats() }
 
-          <Button bsStyle="custom" bsSize="small" onClick={() => this.reset()}>Reset</Button>
+          <Button bsStyle="custom" bsSize="small" onClick={() => this.resetAll()}>Reset</Button>
         </div>
       </div>
     )
