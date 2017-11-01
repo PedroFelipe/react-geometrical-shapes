@@ -65,3 +65,14 @@
     color: $brown;
   }
 }
+
+div[draggable="true"] {
+  cursor: move;
+  
+  & > div {
+    width: 11px;
+    height: 11px;
+    background-color: $red !important;
+    border-radius: 60px;
+  }
+}

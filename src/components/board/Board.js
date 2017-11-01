@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import { Button } from 'react-bootstrap'
-import { isEmpty } from 'ramda'
+import { isEmpty, hasIn } from 'ramda'
 import { throttle } from 'lodash'
 import DraggableSVG from 'react-draggable-svg'
 
@@ -28,30 +28,18 @@ class Board extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.updateDimensions())
+    window.addEventListener('resize', this.getDimensions())
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.updateDimensions())
+    window.removeEventListener('resize', this.getDimensions())
   }
 
   componentDidUpdate() {
-    const { points, center } = this.state
-
-    if (points.length === 3 && isEmpty(center)) {
-      const edges = Calculate.edges(points)
-      const center = Calculate.center(edges)
-      const fourthPoint = Calculate.fourthPoint(points, center, edges.middle)
-      const area = Calculate.area(edges, center)
-      const radius = Calculate.radius(area)
-
-      const circle = { area: area, radius: radius }
-
-      this.setState({ points: fourthPoint, center, edges, circle })
-    }
+    this.calculate()
   }
 
-  updateDimensions() {
+  getDimensions() {
     const board = document.querySelector('.board-area')
     const boardConfiguration = board.getBoundingClientRect()
 
@@ -63,6 +51,23 @@ class Board extends Component {
         left: boardConfiguration.left,
       }
     })
+  }
+
+  calculate() {
+    const { points, center } = this.state
+
+    if (points.length === 3 && isEmpty(center)) {
+      const edges = Calculate.edges(points)
+      const center = Calculate.center(edges)
+      const fourthPoint = Calculate.fourthPoint(center, edges.middle)
+      const area = Calculate.area(edges)
+      const radius = Calculate.radius(area)
+
+      const circle = { area: area, radius: radius }
+      const newPoints = [...points.slice(), fourthPoint]
+
+      this.setState({ points: newPoints, center, edges, circle })
+    }
   }
 
   checkPosition(points, x, y) {
@@ -81,13 +86,12 @@ class Board extends Component {
 
     newPoints[key].x = e.clientX - config.left
     newPoints[key].y = e.clientY - config.top
+    newPoints.pop()
 
-    throttle(() => (
-      this.setState({ points: newPoints })
-    ), 10)
+    this.setState({ points: newPoints })
 
     this.reset()
-    this.forceUpdate()
+    this.calculate()
   }
 
   handlePoint(e) {
@@ -119,10 +123,7 @@ class Board extends Component {
       points.map((point, key) => (
         <DraggableSVG.g
           key={key}
-          onDrag={(e) => key <= 2 && this.dragCircle(e, key)}
-          onDragEnter={(e) => key <= 2 && this.dragCircle(e, key)}
           onDragEnd={(e) => key <= 2 && this.dragCircle(e, key)}
-          onDragExit={(e) => key <= 2 && this.dragCircle(e, key)}
         >
           <circle
             cx={point.x}
@@ -152,7 +153,7 @@ class Board extends Component {
   drawLines() {
     const { points, edges } = this.state
 
-    if (points.length >= 3 && !isEmpty(edges)) {
+    if (points[3] && hasIn('x', points[3]) && hasIn('y', points[3]) && !isEmpty(edges)) {
       return (
         <g>
           <line x1={edges.nearest.x} y1={edges.nearest.y} x2={edges.middle.x} y2={edges.middle.y} stroke={BLUE} strokeWidth="2" />
@@ -189,7 +190,7 @@ class Board extends Component {
         <div className="board-stats-column">
           {
             points.map((point, key) => (
-              <p className="board-stats-line">{this.getVerticeName(key)}: [x: {point.x}, y: {point.y}]</p>
+              <p className="board-stats-line">{this.getVerticeName(key)}: [x: {point.x.toFixed(2)}, y: {point.y.toFixed(2)}]</p>
             ))
           }
         </div>

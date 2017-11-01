@@ -28,14 +28,14 @@ const center = (edges) => {
   return { x: centerX, y: centerY }
 }
 
-const fourthPoint = (points, center, middle) => {
+const fourthPoint = (center, middle) => {
   const y = (center.y * 2) - middle.y
   const x = ((y - middle.y) / (center.y - middle.y)) * (center.x - middle.x) + middle.x
 
-  return [...points.slice(), { x, y }]
+  return { x, y }
 }
 
-const area = (edges, center) => {
+const area = (edges) => {
   const { nearest, farest, middle } = edges
 
   const a = distance(nearest, middle)
