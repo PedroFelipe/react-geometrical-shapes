@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 
 import { Button } from 'react-bootstrap'
 import { isEmpty } from 'ramda'
-import DraggableSVG from 'react-draggable-svg'
 
 import Calculate from '../../presenters/Calculate'
 import Point from '../point/Point'
@@ -13,8 +12,8 @@ import Stats from '../stats/Stats'
 import './Board.css'
 
 class Board extends Component {
-  constructor(props) {
-    super(props)
+  constructor() {
+    super()
 
     this.state = {
       points: [],
@@ -37,7 +36,7 @@ class Board extends Component {
   }
 
   componentDidUpdate() {
-    this.calculate()
+    this.generate()
   }
 
   getDimensions() {
@@ -54,7 +53,7 @@ class Board extends Component {
     })
   }
 
-  calculate() {
+  generate() {
     const { points, center } = this.state
 
     if (points.length === 3 && isEmpty(center)) {
@@ -79,6 +78,12 @@ class Board extends Component {
     this.setState({ hide: key })
   }
 
+  shouldCircleHide(key) {
+    const { hide } = this.state
+
+    return hide === key ? 'board-hide' : ''
+  }
+
   moveCircle(e, key) {
     const { points, config } = this.state
     let newPoints = points.slice()
@@ -90,7 +95,7 @@ class Board extends Component {
     this.setState({ points: newPoints, hide: null })
 
     this.reset()
-    this.calculate()
+    this.generate()
   }
 
   handlePoint(e) {
@@ -115,36 +120,31 @@ class Board extends Component {
     this.setState({ points: [], center: {}, edges: {}, circle: {} })
   }
 
-
-  shouldCircleHide(key) {
-    const { hide } = this.state
-
-    return hide === key ? 'board-hide' : ''
-  }
-
   render() {
     const { points, center, edges, circle, config } = this.state
 
     return (
       <div className="board">
         <div className="board-area">
-          <svg viewBox={`0 0 ${config.width} ${config.height}`} onClick={(e) => this.handlePoint(e)}>
-            <g>
-              <Line
-                points={points}
-                edges={edges} />
+          { config.width && config.height &&
+            <svg viewBox={`0 0 ${config.width} ${config.height}`} onClick={(e) => this.handlePoint(e)}>
+              <g>
+                <Line
+                  points={points}
+                  edges={edges} />
 
-              <Circle
-                center={center}
-                circle={circle} />
+                <Circle
+                  center={center}
+                  circle={circle} />
 
-              <Point
-                points={points}
-                hideCircle={(key) => this.hideCircle(key)}
-                moveCircle={(e, key) => this.moveCircle(e, key)}
-                shouldCircleHide={() => this.shouldCircleHide()} />
-            </g>
-          </svg>
+                <Point
+                  points={points}
+                  hideCircle={(key) => this.hideCircle(key)}
+                  moveCircle={(e, key) => this.moveCircle(e, key)}
+                  shouldCircleHide={() => this.shouldCircleHide()} />
+              </g>
+            </svg>
+          }
 
           <Stats
             points={points}

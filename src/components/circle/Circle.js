@@ -1,7 +1,5 @@
 import React from 'react'
 
-import DraggableSVG from 'react-draggable-svg'
-
 import { YELLOW } from '../../constants/colors'
 
 const Circle = ({ center, circle }) => {

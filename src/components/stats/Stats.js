@@ -1,8 +1,5 @@
 import React from 'react'
 
-import DraggableSVG from 'react-draggable-svg'
-
-import { RED, WHITE } from '../../constants/colors'
 import { VERTICES } from '../../constants/vertices'
 
 const Stats = ({ points, circle }) => {
@@ -11,7 +8,7 @@ const Stats = ({ points, circle }) => {
       <div className="board-stats-column">
         {
           points.map((point, key) => (
-            <p className="board-stats-line">{VERTICES[key]}: [x: {point.x.toFixed(2)}, y: {point.y.toFixed(2)}]</p>
+            <p className="board-stats-line" key={key}>{VERTICES[key]}: [x: {point.x.toFixed(2)}, y: {point.y.toFixed(2)}]</p>
           ))
         }
       </div>
