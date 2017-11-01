@@ -1,17 +1,16 @@
 import React, { Component } from 'react'
 
 import { Button } from 'react-bootstrap'
-import { isEmpty, hasIn } from 'ramda'
+import { isEmpty } from 'ramda'
 import DraggableSVG from 'react-draggable-svg'
 
 import Calculate from '../../presenters/Calculate'
+import Point from '../point/Point'
+import Line from '../line/Line'
+import Circle from '../circle/Circle'
+import Stats from '../stats/Stats'
 
 import './Board.css'
-
-const RED = '#FF3735'
-const BLUE = '#0446EA'
-const YELLOW = '#FBD855'
-const WHITE = '#FFFFFF'
 
 class Board extends Component {
   constructor(props) {
@@ -76,12 +75,6 @@ class Board extends Component {
     return points.every((o) => (o.x !== x) && (o.y !== y))
   }
 
-  getVerticeName(i) {
-    const vertices = ['A', 'B', 'C', 'D']
-
-    return vertices[i]
-  }
-
   hideCircle(key) {
     this.setState({ hide: key })
   }
@@ -129,114 +122,33 @@ class Board extends Component {
     return hide === key ? 'board-hide' : ''
   }
 
-  drawCircles() {
-    const { points } = this.state
-
-    return (
-      points.map((point, key) => (
-        <DraggableSVG.g
-          key={key}
-          onDragStart={() => key <= 2 && this.hideCircle(key)}
-          onDragEnd={(e) => key <= 2 && this.moveCircle(e, key)}
-        >
-          <circle
-            cx={point.x}
-            cy={point.y}
-            r="11"
-            stroke="transparent"
-            fill={RED}
-            className={`board-draggable ${this.shouldCircleHide(key)}`}
-          />
-
-          <text
-            x={point.x}
-            y={point.y}
-            textAnchor="middle"
-            stroke={WHITE}
-            strokeWidth="1px"
-            dy=".3em"
-            className={`board-draggable board-number ${this.shouldCircleHide(key)}`}
-          >
-            {this.getVerticeName(key)}
-          </text>
-        </DraggableSVG.g>
-      ))
-    )
-  }
-
-  drawLines() {
-    const { points, edges } = this.state
-
-    if (points[3] && hasIn('x', points[3]) && hasIn('y', points[3]) && !isEmpty(edges)) {
-      return (
-        <g>
-          <line x1={edges.nearest.x} y1={edges.nearest.y} x2={edges.middle.x} y2={edges.middle.y} stroke={BLUE} strokeWidth="2" />
-          <line x1={edges.middle.x} y1={edges.middle.y} x2={edges.farest.x} y2={edges.farest.y} stroke={BLUE} strokeWidth="2" />
-          <line x1={edges.farest.x} y1={edges.farest.y} x2={points[3].x} y2={points[3].y} stroke={BLUE} strokeWidth="2" />
-          <line x1={points[3].x} y1={points[3].y} x2={edges.nearest.x} y2={edges.nearest.y} stroke={BLUE} strokeWidth="2" />
-        </g>
-      )
-    }
-  }
-
-  drawBigCircle() {
-    const { center, circle } = this.state
-
-    if (circle.radius > 0) {
-      return (
-        <circle
-          cx={center.x}
-          cy={center.y}
-          r={circle.radius}
-          stroke={YELLOW}
-          strokeWidth="2"
-          fill="transparent"
-        />
-      )
-    }
-  }
-
-  renderStats() {
-    const { points, circle } = this.state
-
-    return (
-      <div className="board-stats">
-        <div className="board-stats-column">
-          {
-            points.map((point, key) => (
-              <p className="board-stats-line">{this.getVerticeName(key)}: [x: {point.x.toFixed(2)}, y: {point.y.toFixed(2)}]</p>
-            ))
-          }
-        </div>
-
-        {
-          circle.area && circle.radius &&
-          <div className="board-stats-column">
-            <p className="board-stats-line">area: {circle.area.toFixed(2)} px²</p>
-            <p className="board-stats-line">circle radius: {circle.radius.toFixed(2)} px</p>
-          </div>
-        }
-      </div>
-    )
-  }
-
   render() {
-    const { config } = this.state
+    const { points, center, edges, circle, config } = this.state
 
     return (
       <div className="board">
         <div className="board-area">
           <svg viewBox={`0 0 ${config.width} ${config.height}`} onClick={(e) => this.handlePoint(e)}>
             <g>
-              { this.drawLines() }
+              <Line
+                points={points}
+                edges={edges} />
 
-              { this.drawBigCircle() }
+              <Circle
+                center={center}
+                circle={circle} />
 
-              { this.drawCircles() }
+              <Point
+                points={points}
+                hideCircle={(key) => this.hideCircle(key)}
+                moveCircle={(e, key) => this.moveCircle(e, key)}
+                shouldCircleHide={() => this.shouldCircleHide()} />
             </g>
           </svg>
 
-          { this.renderStats() }
+          <Stats
+            points={points}
+            circle={circle} />
 
           <Button bsStyle="custom" bsSize="small" onClick={() => this.resetAll()}>Reset</Button>
         </div>
