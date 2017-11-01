@@ -21,7 +21,7 @@ class App extends Component {
                 </blockquote>
 
                 <p className="app-content">
-                  <b>Parallelogram Autocomplete</b> is a smart webapp written with ES6 and React that calculates the 4th missing point of a parallelogram. All you have to do on the whiteboard is click on 3 different points, they'll be edges of your parallelogram and this app will automatically calculate and draw the 4th point.
+                  <b>Parallelogram Autocomplete</b> is a smart webapp written with ES6 and React that calculates the 4th missing point of a parallelogram. On the whiteboard, click on 3 different points, they'll be the vertices of your parallelogram and the 4th point will be automatically calculated. A circle with the same area as the parallelogram will also be drawn on top of it. The area is calculated with <a href="https://en.wikipedia.org/wiki/Heron%27s_formula">Heron's formula</a>
                 </p>
 
                 <p className="app-content">

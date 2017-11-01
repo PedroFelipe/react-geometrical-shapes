@@ -67,6 +67,12 @@ class Board extends Component {
     return points.every((o) => (o.x !== x) && (o.y !== y))
   }
 
+  getVerticeName(i) {
+    const vertices = ['A', 'B', 'C', 'D']
+
+    return vertices[i]
+  }
+
   handlePoint(e) {
     const { points, config } = this.state
     let newPoints = points.slice()
@@ -110,7 +116,7 @@ class Board extends Component {
             dy=".3em"
             className="board-number"
           >
-            {key}
+            {this.getVerticeName(key)}
           </text>
         </g>
       ))
@@ -157,7 +163,7 @@ class Board extends Component {
         <div className="board-stats-column">
           {
             points.map((point, key) => (
-              <p className="board-stats-line">{key}: [x: {point.x}, y: {point.y}]</p>
+              <p className="board-stats-line">{this.getVerticeName(key)}: [x: {point.x}, y: {point.y}]</p>
             ))
           }
         </div>
@@ -165,7 +171,7 @@ class Board extends Component {
         {
           circle.area && circle.radius &&
           <div className="board-stats-column">
-            <p className="board-stats-line">circle area: {circle.area.toFixed(2)}</p>
+            <p className="board-stats-line">area: {circle.area.toFixed(2)}</p>
             <p className="board-stats-line">circle radius: {circle.radius.toFixed(2)}</p>
           </div>
         }

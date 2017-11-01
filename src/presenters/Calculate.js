@@ -38,15 +38,13 @@ const fourthPoint = (points, center, middle) => {
 const area = (edges, center) => {
   const { nearest, farest, middle } = edges
 
-  const baseA = distance(nearest, middle)
-  const heightA = distance(findCenter(nearest, middle), center)
-  const areaA = baseA * heightA
+  const a = distance(nearest, middle)
+  const b = distance(nearest, farest)
+  const c = distance(farest, middle)
 
-  const baseB = distance(middle, farest)
-  const heightB = distance(findCenter(middle, farest), center)
-  const areaB = baseB * heightB
+  const semiPerimeter = (a + b + c) / 2
 
-  return areaA + areaB
+  return 2 * Math.sqrt(semiPerimeter * (semiPerimeter - a) * (semiPerimeter - b) * (semiPerimeter - c))
 }
 
 const radius = (area) => {
@@ -55,13 +53,6 @@ const radius = (area) => {
 
 const distance = (start, end) => {
   return Math.sqrt(Math.pow(start.x - end.x, 2) +  Math.pow(start.y - end.y, 2))
-}
-
-const findCenter = (start, end) => {
-  const x = (start.x + end.x) / 2
-  const y = (start.y + end.y) / 2
-
-  return { x, y }
 }
 
 export default {
