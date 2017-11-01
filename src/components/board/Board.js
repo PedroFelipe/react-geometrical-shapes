@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 
 import { Button } from 'react-bootstrap'
 import { isEmpty, hasIn } from 'ramda'
-import { throttle } from 'lodash'
 import DraggableSVG from 'react-draggable-svg'
 
 import Calculate from '../../presenters/Calculate'
