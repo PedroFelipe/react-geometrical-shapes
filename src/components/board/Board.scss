@@ -16,6 +16,10 @@
     box-shadow: -0.3125rem 0.3125rem rgba($black, .1);
     overflow: hidden;
   }
+
+  &-draggable {
+    cursor: move;
+  }
 }
 
 .btn.btn-custom {
