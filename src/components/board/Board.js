@@ -7,8 +7,8 @@ import Calculate from '../../presenters/Calculate'
 
 import './Board.css'
 
-const RED = '#E75058'
-const BLUE = '#233D7F'
+const RED = '#FF3735'
+const BLUE = '#0446EA'
 const YELLOW = '#FBD855'
 
 class Board extends Component {
@@ -25,17 +25,11 @@ class Board extends Component {
   }
 
   componentDidMount() {
-    const board = document.querySelector('.board-area')
-    const boardConfiguration = board.getBoundingClientRect()
+    window.addEventListener('resize', this.updateDimensions())
+  }
 
-    this.setState({
-      config: {
-        width: boardConfiguration.width,
-        height: boardConfiguration.height,
-        top: boardConfiguration.top,
-        left: boardConfiguration.left,
-      }
-    })
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateDimensions())
   }
 
   componentDidUpdate() {
@@ -50,6 +44,20 @@ class Board extends Component {
 
       this.setState({ points: fourthPoint, center, edges, radius })
     }
+  }
+
+  updateDimensions() {
+    const board = document.querySelector('.board-area')
+    const boardConfiguration = board.getBoundingClientRect()
+
+    this.setState({
+      config: {
+        width: boardConfiguration.width,
+        height: boardConfiguration.height,
+        top: boardConfiguration.top,
+        left: boardConfiguration.left,
+      }
+    })
   }
 
   checkPosition(points, x, y) {
